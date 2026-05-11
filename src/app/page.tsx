@@ -1,59 +1,61 @@
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-700 to-gray-900">
-      <h1 className="text-4xl font-bold text-gray-200 mb-8">🐺 大灰狼</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-purple-200 to-pink-200">
+      <h1 className="text-4xl font-bold text-orange-500 mb-8">🐱 可爱的小猫咪</h1>
       
       <div className="relative">
         <svg width="400" height="400" viewBox="0 0 400 400">
-          <ellipse cx="200" cy="280" rx="100" ry="40" fill="#4a4a4a" opacity="0.3"/>
+          <ellipse cx="200" cy="280" rx="100" ry="30" fill="#FFA500" opacity="0.2"/>
           
-          <ellipse cx="200" cy="240" rx="90" ry="70" fill="#6B7280"/>
-          <ellipse cx="200" cy="230" rx="75" ry="55" fill="#9CA3AF"/>
+          <ellipse cx="200" cy="230" rx="80" ry="60" fill="#FFA500"/>
+          <ellipse cx="200" cy="225" rx="60" ry="45" fill="#FFB6C1"/>
           
-          <path d="M140 120 L165 180 L120 160 Z" fill="#6B7280"/>
-          <path d="M145 130 L162 175 L128 162 Z" fill="#D1D5DB"/>
-          <path d="M260 120 L235 180 L280 160 Z" fill="#6B7280"/>
-          <path d="M255 130 L238 175 L272 162 Z" fill="#D1D5DB"/>
+          <polygon points="130,120 165,175 110,170" fill="#FFA500"/>
+          <polygon points="138,135 160,170 122,168" fill="#FFB6C1"/>
+          <polygon points="270,120 235,175 290,170" fill="#FFA500"/>
+          <polygon points="262,135 240,170 278,168" fill="#FFB6C1"/>
           
-          <circle cx="200" cy="160" r="50" fill="#6B7280"/>
-          <circle cx="200" cy="155" r="42" fill="#9CA3AF"/>
+          <circle cx="200" cy="160" r="48" fill="#FFA500"/>
+          <circle cx="200" cy="158" r="40" fill="#FFE4E1"/>
           
-          <circle cx="175" cy="145" r="12" fill="#1a1a1a"/>
-          <circle cx="225" cy="145" r="12" fill="#1a1a1a"/>
-          <circle cx="179" cy="141" r="5" fill="white"/>
-          <circle cx="229" cy="141" r="5" fill="white"/>
-          <circle cx="181" cy="143" r="2" fill="#1a1a1a"/>
-          <circle cx="231" cy="143" r="2" fill="#1a1a1a"/>
+          <ellipse cx="170" cy="145" rx="14" ry="18" fill="#1a1a1a"/>
+          <ellipse cx="230" cy="145" rx="14" ry="18" fill="#1a1a1a"/>
+          <ellipse cx="174" cy="141" rx="6" ry="8" fill="white"/>
+          <ellipse cx="234" cy="141" rx="6" ry="8" fill="white"/>
+          <circle cx="176" cy="145" r="3" fill="#1a1a1a"/>
+          <circle cx="236" cy="145" r="3" fill="#1a1a1a"/>
           
-          <path d="M180 175 Q200 195 220 175" stroke="#4B5563" strokeWidth="2" fill="none"/>
+          <path d="M192 168 L200 175 L208 168" stroke="#FF69B4" strokeWidth="2" fill="none"/>
+          <ellipse cx="200" cy="175" rx="6" ry="4" fill="#FF69B4"/>
           
-          <ellipse cx="200" cy="170" rx="18" ry="14" fill="#374151"/>
+          <line x1="150" y1="165" x2="110" y2="160" stroke="#333" strokeWidth="2"/>
+          <line x1="150" y1="172" x2="110" y2="172" stroke="#333" strokeWidth="2"/>
+          <line x1="150" y1="179" x2="110" y2="184" stroke="#333" strokeWidth="2"/>
+          <line x1="250" y1="165" x2="290" y2="160" stroke="#333" strokeWidth="2"/>
+          <line x1="250" y1="172" x2="290" y2="172" stroke="#333" strokeWidth="2"/>
+          <line x1="250" y1="179" x2="290" y2="184" stroke="#333" strokeWidth="2"/>
           
-          <path d="M185 175 L165 185 L170 175" stroke="#374151" strokeWidth="2" fill="none"/>
-          <path d="M185 178 L168 188 L172 178" stroke="#374151" strokeWidth="2" fill="none"/>
-          <path d="M215 175 L235 185 L230 175" stroke="#374151" strokeWidth="2" fill="none"/>
-          <path d="M215 178 L232 188 L228 178" stroke="#374151" strokeWidth="2" fill="none"/>
+          <ellipse cx="145" cy="160" rx="15" ry="8" fill="#FFB6C1" opacity="0.6"/>
+          <ellipse cx="255" cy="160" rx="15" ry="8" fill="#FFB6C1" opacity="0.6"/>
           
-          <ellipse cx="145" cy="165" rx="18" ry="10" fill="#FF9F43" opacity="0.5"/>
-          <ellipse cx="255" cy="165" rx="18" ry="10" fill="#FF9F43" opacity="0.5"/>
+          <ellipse cx="130" cy="200" rx="22" ry="10" fill="#FFA500"/>
+          <ellipse cx="270" cy="200" rx="22" ry="10" fill="#FFA500"/>
           
-          <ellipse cx="135" cy="210" rx="25" ry="12" fill="#6B7280"/>
-          <ellipse cx="265" cy="210" rx="25" ry="12" fill="#6B7280"/>
+          <ellipse cx="200" cy="245" rx="15" ry="8" fill="#FFB6C1"/>
           
-          <ellipse cx="200" cy="250" rx="20" ry="12" fill="#374151"/>
-          <ellipse cx="200" cy="253" rx="10" ry="6" fill="#1F2937"/>
+          <ellipse cx="155" cy="280" rx="18" ry="10" fill="#FFA500"/>
+          <ellipse cx="245" cy="280" rx="18" ry="10" fill="#FFA500"/>
           
-          <ellipse cx="155" cy="285" rx="22" ry="14" fill="#6B7280"/>
-          <ellipse cx="245" cy="285" rx="22" ry="14" fill="#6B7280"/>
+          <path d="M155 288 Q150 305 145 320" stroke="#FFA500" strokeWidth="8" fill="none" strokeLinecap="round"/>
+          <path d="M155 290 Q148 308 142 325" stroke="#FFE4E1" strokeWidth="4" fill="none" strokeLinecap="round"/>
+          <path d="M245 288 Q250 305 255 320" stroke="#FFA500" strokeWidth="8" fill="none" strokeLinecap="round"/>
+          <path d="M245 290 Q252 308 258 325" stroke="#FFE4E1" strokeWidth="4" fill="none" strokeLinecap="round"/>
           
-          <path d="M155 298 Q150 320 148 335" stroke="#6B7280" strokeWidth="10" fill="none" strokeLinecap="round"/>
-          <path d="M155 302 Q148 325 145 340" stroke="#9CA3AF" strokeWidth="5" fill="none" strokeLinecap="round"/>
-          <path d="M245 298 Q250 320 252 335" stroke="#6B7280" strokeWidth="10" fill="none" strokeLinecap="round"/>
-          <path d="M245 302 Q252 325 255 340" stroke="#9CA3AF" strokeWidth="5" fill="none" strokeLinecap="round"/>
+          <path d="M280 220 Q330 200 350 150 Q345 130 330 140 Q320 125 300 135 Q290 115 280 130" stroke="#FFA500" strokeWidth="10" fill="none" strokeLinecap="round"/>
         </svg>
       </div>
       
-      <p className="mt-8 text-xl text-gray-300">~ 嗷呜 ~</p>
+      <p className="mt-8 text-xl text-gray-600">~ 喵喵喵 ~</p>
     </main>
   )
 }
