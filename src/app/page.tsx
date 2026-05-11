@@ -1,70 +1,55 @@
-import Image from 'next/image'
-
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-zinc-900 dark:via-zinc-900 lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="h-4 w-4"
-              width={24}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-sky-100">
+      <h1 className="text-4xl font-bold text-yellow-600 mb-8">🐥 可爱的小黄鸭</h1>
+      
+      <div className="relative">
+        <svg width="400" height="400" viewBox="0 0 400 400">
+          <ellipse cx="200" cy="280" rx="120" ry="50" fill="#FFD93D" opacity="0.3"/>
+          
+          <ellipse cx="200" cy="220" rx="100" ry="80" fill="#FFD93D"/>
+          <ellipse cx="200" cy="210" rx="80" ry="65" fill="#FFE66D"/>
+          
+          <ellipse cx="150" cy="190" rx="35" ry="40" fill="#FFD93D"/>
+          <ellipse cx="150" cy="185" rx="25" ry="30" fill="#FFE66D"/>
+          <ellipse cx="250" cy="190" rx="35" ry="40" fill="#FFD93D"/>
+          <ellipse cx="250" cy="185" rx="25" ry="30" fill="#FFE66D"/>
+          
+          <ellipse cx="130" cy="175" rx="15" ry="18" fill="#FFD93D"/>
+          <ellipse cx="270" cy="175" rx="15" ry="18" fill="#FFD93D"/>
+          
+          <circle cx="200" cy="150" r="55" fill="#FFD93D"/>
+          <circle cx="200" cy="145" r="45" fill="#FFE66D"/>
+          
+          <circle cx="175" cy="135" r="8" fill="#1a1a1a"/>
+          <circle cx="225" cy="135" r="8" fill="#1a1a1a"/>
+          <circle cx="177" cy="133" r="3" fill="white"/>
+          <circle cx="227" cy="133" r="3" fill="white"/>
+          
+          <ellipse cx="200" cy="155" rx="12" ry="8" fill="#FF6B6B"/>
+          
+          <path d="M185 170 Q200 185 215 170" stroke="#1a1a1a" strokeWidth="3" fill="none" strokeLinecap="round"/>
+          
+          <ellipse cx="145" cy="155" rx="15" ry="8" fill="#FF9F43" opacity="0.6"/>
+          <ellipse cx="255" cy="155" rx="15" ry="8" fill="#FF9F43" opacity="0.6"/>
+          
+          <ellipse cx="130" cy="200" rx="20" ry="8" fill="#FF9F43"/>
+          <ellipse cx="270" cy="200" rx="20" ry="8" fill="#FF9F43"/>
+          
+          <ellipse cx="200" cy="260" rx="25" ry="15" fill="#FF6B6B"/>
+          
+          <ellipse cx="160" cy="290" rx="20" ry="12" fill="#FFD93D"/>
+          <ellipse cx="240" cy="290" rx="20" ry="12" fill="#FFD93D"/>
+          
+          <path d="M160 300 Q160 320 165 330" stroke="#FFD93D" strokeWidth="12" fill="none" strokeLinecap="round"/>
+          <path d="M240 300 Q240 320 235 330" stroke="#FFD93D" strokeWidth="12" fill="none" strokeLinecap="round"/>
+          
+          <path d="M290 200 Q340 180 350 150" stroke="#FFD93D" strokeWidth="8" fill="none" strokeLinecap="round"/>
+          <ellipse cx="355" cy="145" rx="12" ry="10" fill="#FFD93D"/>
+        </svg>
       </div>
-
-      <div className="relative z-10 flex flex-col items-center">
-        <h1 className="text-6xl font-bold tracking-tight text-gray-900 dark:text-white">
-          Welcome to{' '}
-          <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            Next.js
-          </span>
-        </h1>
-        <p className="mt-6 text-center text-lg leading-8 text-gray-600 dark:text-gray-400">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 px-2 py-1 font-mono text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-            src/app/page.tsx
-          </code>
-        </p>
-        <div className="mt-10 flex items-center gap-8">
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Read our docs
-          </a>
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-900 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800"
-          >
-            Learn Next.js
-          </a>
-        </div>
-      </div>
-
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-52 left-1/4 -translate-x-1/4 translate-y-1/4 w-[56rem] h-[56rem] rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-20 blur-3xl" />
-        <div className="absolute -bottom-52 right-1/4 translate-x-1/4 translate-y-1/4 w-[56rem] h-[56rem] rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-green-500 opacity-20 blur-3xl" />
-      </div>
+      
+      <p className="mt-8 text-xl text-gray-700">~ 嘎嘎嘎 ~</p>
     </main>
   )
 }
