@@ -16,19 +16,24 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
     const match = content.match(thinkRegex);
     const thinkContent = match ? match[1].trim() : '';
     
-    let mainContent = content;
+    let fullContent = content;
     if (thinkContent) {
-      mainContent = mainContent.replace(thinkRegex, '');
+      fullContent = fullContent.replace(thinkRegex, '');
     }
     
-    mainContent = mainContent.replace(/<thunk>\s*/g, '');
-    mainContent = mainContent.replace(/\s*<\/thunk>/g, '');
-    mainContent = mainContent.replace(/<\/?think>/g, '');
+    fullContent = fullContent.replace(/<thunk>\s*/g, '');
+    fullContent = fullContent.replace(/\s*<\/thunk>/g, '');
+    fullContent = fullContent.replace(/<\/?think>/g, '');
+    fullContent = fullContent.trim();
     
-    return { thinkContent, mainContent: mainContent.trim() };
+    const parts = fullContent.split(/^---$/m);
+    const copyableContent = parts[0]?.trim() || fullContent;
+    const adviceContent = parts[1]?.trim() || '';
+    
+    return { thinkContent, mainContent: fullContent, copyableContent };
   };
 
-  const { thinkContent, mainContent } = parseContent();
+  const { thinkContent, mainContent, copyableContent } = parseContent();
 
   const renderText = (text: string) => {
     const lines = text.split('\n');
@@ -66,7 +71,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(mainContent);
+    await navigator.clipboard.writeText(copyableContent);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
