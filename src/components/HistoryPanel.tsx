@@ -1,4 +1,4 @@
-import { MessageSquare, Clock } from 'lucide-react';
+import { MessageSquare, Clock, Plus } from 'lucide-react';
 
 interface HistoryItem {
   id: string;
@@ -12,15 +12,16 @@ interface HistoryPanelProps {
   activeId: string | null;
   onSelect: (id: string) => void;
   title: string;
+  onNewSession: () => void;
 }
 
-export default function HistoryPanel({ history, activeId, onSelect, title }: HistoryPanelProps) {
+export default function HistoryPanel({ history, activeId, onSelect, title, onNewSession }: HistoryPanelProps) {
   return (
     <aside className="w-72 bg-gray-900/30 border-r border-gray-800 flex flex-col">
       <div className="p-4 border-b border-gray-800">
         <h2 className="text-white font-semibold flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-yellow-500" />
-          {title}
+          {title}历史
         </h2>
       </div>
 
@@ -59,8 +60,12 @@ export default function HistoryPanel({ history, activeId, onSelect, title }: His
       </div>
 
       <div className="p-4 border-t border-gray-800">
-        <button className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2">
-          <span className="text-sm font-medium">+ 新建对话</span>
+        <button
+          onClick={onNewSession}
+          className="w-full py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/25"
+        >
+          <Plus className="w-5 h-5" />
+          <span className="text-sm font-medium">新建对话</span>
         </button>
       </div>
     </aside>

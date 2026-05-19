@@ -17,6 +17,7 @@ interface ChatWindowProps {
 
 export default function ChatWindow({ title, messages, onSendMessage }: ChatWindowProps) {
   const [inputValue, setInputValue] = useState('');
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,8 +30,8 @@ export default function ChatWindow({ title, messages, onSendMessage }: ChatWindo
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-900/50">
-      <header className="h-16 bg-gray-900/80 border-b border-gray-800 flex items-center justify-between px-6">
+    <div className="flex-1 flex flex-col h-full bg-gray-900/50">
+      <header className="h-16 flex-shrink-0 bg-gray-900/80 border-b border-gray-800 flex items-center justify-between px-6">
         <h2 className="text-white font-semibold">{title}</h2>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -38,7 +39,10 @@ export default function ChatWindow({ title, messages, onSendMessage }: ChatWindo
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600"
+      >
         {messages.map((message) => (
           <ChatMessage
             key={message.id}
@@ -50,7 +54,9 @@ export default function ChatWindow({ title, messages, onSendMessage }: ChatWindo
         <div ref={messagesEndRef} />
       </div>
 
-      <ChatInput onSend={handleSend} />
+      <div className="flex-shrink-0">
+        <ChatInput onSend={handleSend} />
+      </div>
     </div>
   );
 }

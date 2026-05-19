@@ -1,4 +1,4 @@
-import { MessageSquare, Sparkles, Layers, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MessageSquare, Sparkles, FileText, TrendingUp, Image, User, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
   activeFeature: string;
@@ -11,7 +11,9 @@ export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, o
   const features = [
     { id: 'polish', name: '文案润色大师', icon: MessageSquare },
     { id: 'prompt', name: '提示词大师', icon: Sparkles },
-    { id: 'create', name: '三合一创作中心', icon: Layers },
+    { id: 'cover', name: '封面提示词', icon: Image },
+    { id: 'topic', name: '爆款选题', icon: TrendingUp },
+    { id: 'chapter', name: '章节大师', icon: FileText },
   ];
 
   return (
