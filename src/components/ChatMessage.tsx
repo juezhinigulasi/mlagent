@@ -15,8 +15,17 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
     const thinkRegex = /<think>([\s\S]*?)<\/think>/;
     const match = content.match(thinkRegex);
     const thinkContent = match ? match[1].trim() : '';
-    const mainContent = content.replace(thinkRegex, '').trim();
-    return { thinkContent, mainContent };
+    
+    let mainContent = content;
+    if (thinkContent) {
+      mainContent = mainContent.replace(thinkRegex, '');
+    }
+    
+    mainContent = mainContent.replace(/<thunk>\s*/g, '');
+    mainContent = mainContent.replace(/\s*<\/thunk>/g, '');
+    mainContent = mainContent.replace(/<\/?think>/g, '');
+    
+    return { thinkContent, mainContent: mainContent.trim() };
   };
 
   const { thinkContent, mainContent } = parseContent();
