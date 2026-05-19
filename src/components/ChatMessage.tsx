@@ -27,7 +27,10 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
     fullContent = fullContent.trim();
     
     const parts = fullContent.split(/^---$/m);
-    const copyableContent = parts[0]?.trim() || fullContent;
+    let copyableContent = parts[0]?.trim() || fullContent;
+    
+    copyableContent = copyableContent.replace(/^###\s*.*$/m, '').trim();
+    
     const adviceContent = parts[1]?.trim() || '';
     
     return { thinkContent, mainContent: fullContent, copyableContent };
