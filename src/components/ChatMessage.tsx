@@ -54,21 +54,6 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
     let blockId = 0;
 
     lines.forEach((line, index) => {
-      if (line.startsWith('**提示词：**') || line.startsWith('提示词：')) {
-        if (inList) {
-          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
-          inList = false;
-          listItems = [];
-        }
-        inPrompt = true;
-        elements.push(
-          <p key={index} className="font-bold mb-2 text-gray-200">
-            {line}
-          </p>
-        );
-        return;
-      }
-
       if (line.startsWith('**') && line.endsWith('**')) {
         if (inList) {
           elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
@@ -76,7 +61,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
           listItems = [];
         }
         if (promptLines.length > 0) {
-          const promptText = promptLines.join('\n');
+          const promptText = promptLines.join('\n').trim();
           const currentId = `prompt-${blockId++}`;
           elements.push(
             <CopyableBlock 
@@ -93,6 +78,21 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
         elements.push(
           <p key={index} className="font-bold mb-2 text-yellow-400">
             {line.slice(2, -2)}
+          </p>
+        );
+        return;
+      }
+
+      if (line.startsWith('**提示词：**') || line.startsWith('提示词：')) {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        inPrompt = true;
+        elements.push(
+          <p key={index} className="font-bold mb-2 text-gray-200">
+            {line}
           </p>
         );
         return;
@@ -187,7 +187,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
     }
 
     if (promptLines.length > 0) {
-      const promptText = promptLines.join('\n');
+      const promptText = promptLines.join('\n').trim();
       const currentId = `prompt-${blockId++}`;
       elements.push(
         <CopyableBlock 
