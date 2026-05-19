@@ -14,6 +14,9 @@ export async function POST(request: NextRequest) {
   } else if (featureId === 'prompt') {
     apiKey = process.env.DIFY_API_KEY_PROMPT;
     apiKeyName = 'DIFY_API_KEY_PROMPT';
+  } else if (featureId === 'cover') {
+    apiKey = process.env.DIFY_API_KEY_COVER;
+    apiKeyName = 'DIFY_API_KEY_COVER';
   } else {
     // 默认使用提示词大师的密钥
     apiKey = process.env.DIFY_API_KEY_PROMPT;

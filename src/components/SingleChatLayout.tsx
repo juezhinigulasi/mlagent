@@ -24,7 +24,7 @@ const replies: Record<string, string> = {
 };
 
 // 需要连接 Dify API 的功能模块
-const apiFeatures = ['prompt', 'polish'];
+const apiFeatures = ['prompt', 'polish', 'cover'];
 
 export default function SingleChatLayout({
   title,
