@@ -98,6 +98,15 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
         return;
       }
 
+      if (line.startsWith('【') && line.endsWith('】')) {
+        elements.push(
+          <p key={index} className="mb-2 text-gray-400 font-medium">
+            {line}
+          </p>
+        );
+        return;
+      }
+
       if (line.startsWith('* ') || line.startsWith('- ')) {
         inList = true;
         listItems.push(
