@@ -19,12 +19,12 @@ const replies: Record<string, string> = {
   polish: '【文案润色大师】正在为您润色文案...',
   prompt: '【提示词大师】正在为您生成提示词...',
   chapter: '【章节大师】正在为您构思章节...',
-  topic: '【爆款选题】正在为您生成选题...',
+  topic: '【爆款标题】正在为您生成标题...',
   cover: '【封面提示词】正在为您创作提示词...',
 };
 
 // 需要连接 Dify API 的功能模块
-const apiFeatures = ['prompt', 'polish', 'cover'];
+const apiFeatures = ['prompt', 'polish', 'cover', 'topic', 'chapter'];
 
 export default function SingleChatLayout({
   title,
