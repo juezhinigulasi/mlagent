@@ -49,64 +49,17 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
     const elements: React.ReactNode[] = [];
     let inList = false;
     let listItems: React.ReactNode[] = [];
-    let inStoryboard = false;
-    let storyboardLines: string[] = [];
     let inPrompt = false;
     let promptLines: string[] = [];
     let blockId = 0;
 
     lines.forEach((line, index) => {
-      if (line.includes('[概念分镜推演与动作指导]')) {
-        if (inList) {
-          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
-          inList = false;
-          listItems = [];
-        }
-        if (storyboardLines.length > 0) {
-          const storyboardText = storyboardLines.join('\n');
-          const currentId = `storyboard-${blockId++}`;
-          elements.push(
-            <CopyableBlock 
-              key={currentId}
-              content={storyboardText}
-              onCopy={() => handleCopy(storyboardText, currentId)}
-              copied={copied === currentId}
-              label="分镜"
-            />
-          );
-          storyboardLines = [];
-        }
-        inStoryboard = true;
-        inPrompt = false;
-        elements.push(
-          <p key={index} className="font-bold mb-2 text-gray-200">
-            {line}
-          </p>
-        );
-        return;
-      }
-
       if (line.startsWith('**提示词：**') || line.startsWith('提示词：')) {
         if (inList) {
           elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
           inList = false;
           listItems = [];
         }
-        if (storyboardLines.length > 0) {
-          const storyboardText = storyboardLines.join('\n');
-          const currentId = `storyboard-${blockId++}`;
-          elements.push(
-            <CopyableBlock 
-              key={currentId}
-              content={storyboardText}
-              onCopy={() => handleCopy(storyboardText, currentId)}
-              copied={copied === currentId}
-              label="分镜"
-            />
-          );
-          storyboardLines = [];
-        }
-        inStoryboard = false;
         inPrompt = true;
         elements.push(
           <p key={index} className="font-bold mb-2 text-gray-200">
@@ -122,20 +75,6 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
           inList = false;
           listItems = [];
         }
-        if (storyboardLines.length > 0) {
-          const storyboardText = storyboardLines.join('\n');
-          const currentId = `storyboard-${blockId++}`;
-          elements.push(
-            <CopyableBlock 
-              key={currentId}
-              content={storyboardText}
-              onCopy={() => handleCopy(storyboardText, currentId)}
-              copied={copied === currentId}
-              label="分镜"
-            />
-          );
-          storyboardLines = [];
-        }
         if (promptLines.length > 0) {
           const promptText = promptLines.join('\n');
           const currentId = `prompt-${blockId++}`;
@@ -150,18 +89,12 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
           );
           promptLines = [];
         }
-        inStoryboard = false;
         inPrompt = false;
         elements.push(
           <p key={index} className="font-bold mb-2 text-yellow-400">
             {line.slice(2, -2)}
           </p>
         );
-        return;
-      }
-
-      if (inStoryboard) {
-        storyboardLines.push(line);
         return;
       }
 
@@ -251,20 +184,6 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
 
     if (inList) {
       elements.push(<ul key="final-list" className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
-    }
-
-    if (storyboardLines.length > 0) {
-      const storyboardText = storyboardLines.join('\n');
-      const currentId = `storyboard-${blockId++}`;
-      elements.push(
-        <CopyableBlock 
-          key={currentId}
-          content={storyboardText}
-          onCopy={() => handleCopy(storyboardText, currentId)}
-          copied={copied === currentId}
-          label="分镜"
-        />
-      );
     }
 
     if (promptLines.length > 0) {
