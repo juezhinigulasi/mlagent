@@ -1,0 +1,94 @@
+import { MessageSquare, Sparkles, Layers, User, ChevronLeft, ChevronRight } from 'lucide-react';
+
+interface SidebarProps {
+  activeFeature: string;
+  onFeatureChange: (feature: string) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+}
+
+export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, onToggleCollapse }: SidebarProps) {
+  const features = [
+    { id: 'polish', name: '文案润色大师', icon: MessageSquare },
+    { id: 'prompt', name: '提示词大师', icon: Sparkles },
+    { id: 'create', name: '三合一创作中心', icon: Layers },
+  ];
+
+  return (
+    <aside className={`bg-[#0a0a0a] border-r border-gray-800 flex flex-col transition-all duration-300 ${
+      isCollapsed ? 'w-16' : 'w-64'
+    }`}>
+      <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+        <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
+          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-6 h-6 text-black" />
+          </div>
+          {!isCollapsed && (
+            <div className="overflow-hidden">
+              <h1 className="text-white font-bold text-lg whitespace-nowrap">AI Creator</h1>
+              <p className="text-gray-500 text-xs whitespace-nowrap">内容创作平台</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <nav className="flex-1 p-3 space-y-2">
+        {features.map((feature) => {
+          const Icon = feature.icon;
+          const isActive = activeFeature === feature.id;
+          return (
+            <button
+              key={feature.id}
+              onClick={() => onFeatureChange(feature.id)}
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ${
+                isActive
+                  ? 'bg-gradient-to-r from-yellow-500/20 to-transparent border border-yellow-500/50 shadow-lg shadow-yellow-500/10'
+                  : 'bg-gray-900/50 hover:bg-gray-800/50 border border-transparent'
+              }`}
+              title={isCollapsed ? feature.name : undefined}
+            >
+              <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all flex-shrink-0 ${
+                  isActive ? 'bg-yellow-500 text-black' : 'bg-gray-800 text-gray-400'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+              </div>
+              {!isCollapsed && (
+                <span
+                  className={`text-left font-medium transition-colors whitespace-nowrap ${
+                    isActive ? 'text-yellow-400' : 'text-gray-300'
+                  }`}
+                >
+                  {feature.name}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="p-3 border-t border-gray-800">
+        <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+          <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center flex-shrink-0">
+            <User className="w-5 h-5 text-gray-400" />
+          </div>
+          {!isCollapsed && (
+            <div className="flex-1 overflow-hidden">
+              <p className="text-white text-sm font-medium whitespace-nowrap">创作者</p>
+              <p className="text-gray-500 text-xs whitespace-nowrap">Pro 会员</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <button
+        onClick={onToggleCollapse}
+        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-full flex items-center justify-center text-gray-400 hover:text-yellow-500 transition-all z-10 shadow-lg"
+        title={isCollapsed ? '展开侧边栏' : '收缩侧边栏'}
+      >
+        {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+      </button>
+    </aside>
+  );
+}
