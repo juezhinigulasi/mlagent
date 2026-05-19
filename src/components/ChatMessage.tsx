@@ -76,7 +76,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
         }
         inPrompt = false;
         elements.push(
-          <p key={index} className="font-bold mb-2 text-yellow-400">
+          <p key={index} className="font-bold mb-2 text-orange-400">
             {line.slice(2, -2)}
           </p>
         );
@@ -91,7 +91,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
         }
         inPrompt = true;
         elements.push(
-          <p key={index} className="font-bold mb-2 text-gray-200">
+          <p key={index} className="font-bold mb-2 text-yellow-400">
             {line}
           </p>
         );
