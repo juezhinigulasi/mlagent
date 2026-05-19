@@ -214,7 +214,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
         if (line.startsWith('* ') || line.startsWith('- ')) {
           inList = true;
           listItems.push(
-            <li key={`block-item-${index}`} className="mb-1">
+            <li key={`block-item-${index}`} className="mb-1 text-blue-300">
               {line.slice(2)}
             </li>
           );
@@ -232,7 +232,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
             listItems = [];
           }
           elements.push(
-            <p key={`block-p-${index}`} className="mb-2 last:mb-0 leading-relaxed">
+            <p key={`block-p-${index}`} className="mb-2 last:mb-0 leading-relaxed text-blue-300">
               {line}
             </p>
           );
@@ -248,8 +248,8 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
 
     return (
       <div className="relative my-4">
-        <div className="bg-gray-700/30 border-2 border-yellow-500/40 rounded-xl p-4">
-          <div className="text-gray-200">
+        <div className="bg-gray-700/30 border-2 border-blue-500/40 rounded-xl p-4">
+          <div className="text-blue-300">
             {renderBlockText(content)}
           </div>
         </div>
