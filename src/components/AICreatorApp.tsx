@@ -8,7 +8,7 @@ import { useChat, featureNames } from '../context/ChatContext';
 export default function AICreatorApp() {
   const [activeFeature, setActiveFeature] = useState('polish');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { sessions, activeSessionId, setActiveSession, createNewSession } = useChat();
+  const { sessions, activeSessionId, setActiveSession, createNewSession, deleteSession } = useChat();
 
   const getCurrentHistory = () => {
     return sessions[activeFeature] || [];
@@ -24,6 +24,10 @@ export default function AICreatorApp() {
 
   const handleNewSession = () => {
     createNewSession(activeFeature);
+  };
+
+  const handleDelete = (sessionId: string) => {
+    deleteSession(activeFeature, sessionId);
   };
 
   return (
@@ -43,6 +47,7 @@ export default function AICreatorApp() {
           activeHistoryId={activeSessionId[activeFeature] || null}
           onHistorySelect={handleHistorySelect}
           onNewSession={handleNewSession}
+          onDelete={handleDelete}
         />
       </main>
     </div>

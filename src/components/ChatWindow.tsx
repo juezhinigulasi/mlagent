@@ -13,9 +13,10 @@ interface ChatWindowProps {
   title: string;
   messages: Message[];
   onSendMessage: (message: string) => void;
+  isStreaming?: boolean;
 }
 
-export default function ChatWindow({ title, messages, onSendMessage }: ChatWindowProps) {
+export default function ChatWindow({ title, messages, onSendMessage, isStreaming = false }: ChatWindowProps) {
   const [inputValue, setInputValue] = useState('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,8 +35,12 @@ export default function ChatWindow({ title, messages, onSendMessage }: ChatWindo
       <header className="h-16 flex-shrink-0 bg-gray-900/80 border-b border-gray-800 flex items-center justify-between px-6">
         <h2 className="text-white font-semibold">{title}</h2>
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          <span className="text-xs text-gray-400">在线</span>
+          <span className={`w-2 h-2 rounded-full animate-pulse ${
+            isStreaming ? 'bg-yellow-500' : 'bg-green-500'
+          }`}></span>
+          <span className="text-xs text-gray-400">
+            {isStreaming ? 'AI 正在思考...' : '在线'}
+          </span>
         </div>
       </header>
 

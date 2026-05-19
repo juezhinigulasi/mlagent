@@ -9,6 +9,7 @@ export interface ChatSession {
   time: string;
   preview: string;
   messages: Message[];
+  conversationId?: string;
 }
 
 export interface ChatState {
@@ -23,6 +24,9 @@ interface ChatContextType {
   addMessage: (featureId: string, sessionId: string, message: Message) => void;
   createNewSession: (featureId: string) => void;
   getActiveSessionMessages: (featureId: string) => Message[];
+  deleteSession: (featureId: string, sessionId: string) => void;
+  getConversationId: (featureId: string) => string | undefined;
+  setConversationId: (featureId: string, sessionId: string, conversationId: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -217,6 +221,41 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return activeSession?.messages || [];
   };
 
+  const deleteSession = (featureId: string, sessionId: string) => {
+    setSessions(prev => {
+      const featureSessions = prev[featureId] || [];
+      const filteredSessions = featureSessions.filter(session => session.id !== sessionId);
+      
+      // 如果删除的是当前活跃的会话，需要切换到另一个
+      if (activeSessionId[featureId] === sessionId) {
+        const newActiveId = filteredSessions.length > 0 ? filteredSessions[0].id : null;
+        setActiveSessionId(prevActive => ({ ...prevActive, [featureId]: newActiveId }));
+      }
+      
+      return { ...prev, [featureId]: filteredSessions };
+    });
+  };
+
+  const getConversationId = (featureId: string): string | undefined => {
+    const featureSessions = sessions[featureId] || [];
+    const activeId = activeSessionId[featureId];
+    const activeSession = featureSessions.find(s => s.id === activeId);
+    return activeSession?.conversationId;
+  };
+
+  const setConversationId = (featureId: string, sessionId: string, conversationId: string) => {
+    setSessions(prev => {
+      const featureSessions = prev[featureId] || [];
+      const updatedSessions = featureSessions.map(session => {
+        if (session.id === sessionId) {
+          return { ...session, conversationId };
+        }
+        return session;
+      });
+      return { ...prev, [featureId]: updatedSessions };
+    });
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -226,6 +265,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         addMessage,
         createNewSession,
         getActiveSessionMessages,
+        deleteSession,
+        getConversationId,
+        setConversationId,
       }}
     >
       {children}
