@@ -75,11 +75,20 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
           promptLines = [];
         }
         inPrompt = false;
-        elements.push(
-          <p key={index} className="font-bold mb-2 text-orange-400">
-            {line.slice(2, -2)}
-          </p>
-        );
+        const content = line.slice(2, -2);
+        if (content.includes('分镜') || content.includes('推演') || content.includes('排雷')) {
+          elements.push(
+            <p key={index} className="font-bold mb-2 text-gray-200">
+              {content}
+            </p>
+          );
+        } else {
+          elements.push(
+            <p key={index} className="font-bold mb-2 text-orange-400">
+              {content}
+            </p>
+          );
+        }
         return;
       }
 
@@ -100,7 +109,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
 
       if (line.startsWith('【') && line.endsWith('】')) {
         elements.push(
-          <p key={index} className="mb-2 text-gray-400 font-medium">
+          <p key={index} className="mb-2 text-gray-200 font-medium">
             {line}
           </p>
         );
