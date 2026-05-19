@@ -98,15 +98,10 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
         return;
       }
 
-      if (inPrompt) {
-        promptLines.push(line);
-        return;
-      }
-
       if (line.startsWith('* ') || line.startsWith('- ')) {
         inList = true;
         listItems.push(
-          <li key={`item-${index}`} className="mb-1 text-gray-300">
+          <li key={`item-${index}`} className="mb-1 text-blue-300">
             {line.slice(2)}
           </li>
         );
@@ -154,7 +149,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
           listItems = [];
         }
         elements.push(
-          <code key={index} className="bg-gray-700/50 px-2 py-1 rounded text-yellow-400 text-sm">
+          <code key={index} className="bg-gray-700/50 px-2 py-1 rounded text-blue-300 text-sm">
             {line.slice(1, -1)}
           </code>
         );
@@ -174,7 +169,7 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
           listItems = [];
         }
         elements.push(
-          <p key={index} className="mb-2 last:mb-0 text-gray-300 leading-relaxed">
+          <p key={index} className="mb-2 last:mb-0 text-blue-300 leading-relaxed">
             {line}
           </p>
         );
