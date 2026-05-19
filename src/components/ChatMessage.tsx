@@ -40,37 +40,99 @@ export default function ChatMessage({ content, isUser, timestamp }: ChatMessageP
 
   const renderText = (text: string) => {
     const lines = text.split('\n');
-    return lines.map((line, index) => {
+    const elements: React.ReactNode[] = [];
+    let inList = false;
+    let listItems: React.ReactNode[] = [];
+
+    lines.forEach((line, index) => {
       if (line.startsWith('**') && line.endsWith('**')) {
-        return (
-          <p key={index} className="font-bold mb-2">
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(
+          <p key={index} className="font-bold mb-2 text-gray-200">
             {line.slice(2, -2)}
           </p>
         );
-      }
-      if (line.startsWith('* ') || line.startsWith('- ')) {
-        return (
-          <li key={index} className="list-disc list-inside ml-4 mb-1">
+      } else if (line.startsWith('* ') || line.startsWith('- ')) {
+        inList = true;
+        listItems.push(
+          <li key={`item-${index}`} className="mb-1 text-gray-300">
             {line.slice(2)}
           </li>
         );
-      }
-      if (line.startsWith('# ')) {
-        return (
-          <h3 key={index} className="text-lg font-bold text-yellow-400 mb-2">
+      } else if (line.startsWith('# ')) {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(
+          <h2 key={index} className="text-xl font-bold text-yellow-400 mb-3 mt-4">
             {line.slice(2)}
+          </h2>
+        );
+      } else if (line.startsWith('## ')) {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(
+          <h3 key={index} className="text-lg font-bold text-yellow-500 mb-2 mt-3">
+            {line.slice(3)}
           </h3>
         );
+      } else if (line.startsWith('### ')) {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(
+          <h4 key={index} className="text-base font-semibold text-yellow-600 mb-2 mt-2">
+            {line.slice(4)}
+          </h4>
+        );
+      } else if (line.startsWith('`') && line.endsWith('`')) {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(
+          <code key={index} className="bg-gray-700/50 px-2 py-1 rounded text-yellow-400 text-sm">
+            {line.slice(1, -1)}
+          </code>
+        );
+      } else if (line.trim() === '') {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(<br key={index} />);
+      } else {
+        if (inList) {
+          elements.push(<ul key={`list-${index}`} className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+          inList = false;
+          listItems = [];
+        }
+        elements.push(
+          <p key={index} className="mb-2 last:mb-0 text-gray-300 leading-relaxed">
+            {line}
+          </p>
+        );
       }
-      if (line.trim() === '') {
-        return <br key={index} />;
-      }
-      return (
-        <p key={index} className="mb-2 last:mb-0">
-          {line}
-        </p>
-      );
     });
+
+    if (inList) {
+      elements.push(<ul key="final-list" className="list-disc list-outside ml-6 mb-2">{listItems}</ul>);
+    }
+
+    return elements;
   };
 
   const handleCopy = async () => {
