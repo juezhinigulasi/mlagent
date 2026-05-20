@@ -25,21 +25,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchPoints = async (userId: string) => {
     setPointsLoading(true);
+    
+    const timeoutPromise = new Promise<{ data: { points: number } | null; error: Error | null }>((resolve) => {
+      setTimeout(() => {
+        resolve({ data: null, error: new Error('Timeout') });
+      }, 5000);
+    });
+
+    const queryPromise = supabase
+      .from('user_points')
+      .select('points')
+      .eq('user_id', userId)
+      .single()
+      .then((result) => ({ data: result.data, error: result.error as Error | null }))
+      .catch((err) => ({ data: null, error: err as Error }));
+
     try {
-      const { data, error } = await Promise.race([
-        supabase
-          .from('user_points')
-          .select('points')
-          .eq('user_id', userId)
-          .single(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
-      ]);
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
       
-      if (error) {
+      if (error || !data) {
         console.error('获取积分失败:', error);
         setPoints(0);
       } else {
-        setPoints(data?.points || 0);
+        setPoints(data.points || 0);
       }
     } catch (error) {
       console.error('获取积分失败:', error);
