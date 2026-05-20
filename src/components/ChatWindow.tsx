@@ -21,9 +21,40 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const [inputValue, setInputValue] = useState('');
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const lastScrollPositionRef = useRef(0);
+  const isInitialLoad = useRef(true);
 
-  // 实时保存滚动位置
+  // 保存滚动位置到 localStorage
+  const saveScrollPosition = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      const scrollTop = container.scrollTop;
+      localStorage.setItem('chatScrollPosition', scrollTop.toString());
+    }
+  }, []);
+
+  // 恢复滚动位置
+  const restoreScrollPosition = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const savedPosition = localStorage.getItem('chatScrollPosition');
+    if (savedPosition) {
+      const position = parseInt(savedPosition, 10);
+      console.log('Restoring scroll position:', position);
+      
+      // 确保 DOM 完全更新后再设置滚动位置
+      setTimeout(() => {
+        container.scrollTop = position;
+      }, 50);
+      
+      // 再尝试一次，确保生效
+      setTimeout(() => {
+        container.scrollTop = position;
+      }, 150);
+    }
+  }, []);
+
+  // 处理滚动
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
@@ -35,25 +66,38 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
     setShowScrollToBottom(distanceFromBottom >= 100);
     
     // 实时保存滚动位置
-    lastScrollPositionRef.current = scrollTop;
-    sessionStorage.setItem('chatScrollPosition', scrollTop.toString());
+    localStorage.setItem('chatScrollPosition', scrollTop.toString());
   }, []);
 
-  // 恢复滚动位置
+  // 组件挂载时恢复位置
   useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (container) {
-      const savedPosition = sessionStorage.getItem('chatScrollPosition');
-      if (savedPosition) {
-        // 使用多个 requestAnimationFrame 确保正确恢复
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            container.scrollTop = parseInt(savedPosition, 10);
-          });
-        });
+    restoreScrollPosition();
+    
+    // 监听标签页可见性变化
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Page visible, restoring scroll position');
+        restoreScrollPosition();
+      } else {
+        // 隐藏时保存位置
+        saveScrollPosition();
       }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [restoreScrollPosition, saveScrollPosition]);
+
+  // messages 变化时恢复位置（但只在首次加载时）
+  useEffect(() => {
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      restoreScrollPosition();
     }
-  }, [messages]);
+  }, [messages, restoreScrollPosition]);
 
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
@@ -62,6 +106,10 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
         top: container.scrollHeight,
         behavior: 'smooth'
       });
+      // 滚动到底部后，保存这个位置
+      setTimeout(() => {
+        saveScrollPosition();
+      }, 300);
     }
   };
 
