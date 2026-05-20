@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchPoints = async (userId: string) => {
     setPointsLoading(true);
     
-    let timeoutId: ReturnType<typeof setTimeout>;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const timeoutPromise = new Promise<void>((_, reject) => {
       timeoutId = setTimeout(() => reject(new Error('Timeout')), 5000);
     });
@@ -51,7 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('获取积分失败:', error);
       setPoints(0);
     } finally {
-      clearTimeout(timeoutId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       setPointsLoading(false);
     }
   };
