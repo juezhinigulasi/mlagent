@@ -113,16 +113,16 @@ const defaultSessions: Record<string, ChatSession[]> = {
 const featureWelcomeMessages: Record<string, string> = {
   polish: '您好！我是文案润色大师。请把需要润色的文案发给我，我来帮您优化表达。',
   prompt: '欢迎使用提示词大师！告诉我您想要生成什么类型的提示词，我来帮您优化。',
-  cover: '封面提示词大师为您服务！请告诉我您的书籍类型和风格。',
-  topic: '欢迎使用爆款标题大师！告诉我您的领域，我来帮您生成吸引人的标题。',
+  cover: '封面标题章节为您服务！请告诉我您的书籍类型和风格。',
+  topic: '欢迎使用veo 8秒提示词！告诉我您的领域，我来帮您生成吸引人的标题。',
   chapter: '您好！我是章节大师，专门帮您构思小说章节。请告诉我您的故事背景和想要的章节类型。',
 };
 
 const featureNames: Record<string, string> = {
   polish: '文案润色大师',
   prompt: '提示词大师',
-  cover: '封面提示词',
-  topic: '爆款标题',
+  cover: '封面标题章节',
+  topic: 'veo 8秒提示词',
   chapter: '章节大师',
 };
 

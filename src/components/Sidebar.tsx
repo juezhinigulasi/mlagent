@@ -15,8 +15,8 @@ export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, o
   const features = [
     { id: 'polish', name: '文案润色大师', icon: MessageSquare },
     { id: 'prompt', name: '提示词大师', icon: Sparkles },
-    { id: 'cover', name: '封面提示词', icon: Image },
-    { id: 'topic', name: '爆款选题', icon: TrendingUp },
+    { id: 'cover', name: '封面标题章节', icon: Image },
+    { id: 'topic', name: 'veo 8秒提示词', icon: TrendingUp },
     { id: 'chapter', name: '章节大师', icon: FileText },
   ];
 

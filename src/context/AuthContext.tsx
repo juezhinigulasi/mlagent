@@ -79,22 +79,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
-    
-    if (!error && data.user) {
-      try {
-        await supabase
-          .from('user_points')
-          .insert([{ user_id: data.user.id, points: 0 }])
-          .select();
-      } catch (e) {
-        console.log('积分记录创建:', e);
-      }
-    }
-    
     return { error: error?.message || null };
   };
 
