@@ -20,14 +20,22 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const [inputValue, setInputValue] = useState('');
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isUserScrollingRef = useRef(false);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // 只有当用户没有手动滚动时，才自动滚动到底部
+    if (!isUserScrollingRef.current && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
-  const handleSend = (message: string) => {
-    setInputValue('');
-    onSendMessage(message);
+  const handleScroll = () => {
+    if (messagesContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+      // 如果用户滚动到接近底部，认为用户停止手动滚动
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      isUserScrollingRef.current = !isAtBottom;
+    }
   };
 
   return (
@@ -46,6 +54,7 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
 
       <div 
         ref={messagesContainerRef}
+        onScroll={handleScroll}
         className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600"
       >
         {messages.map((message) => (
@@ -60,7 +69,7 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
       </div>
 
       <div className="flex-shrink-0">
-        <ChatInput onSend={handleSend} />
+        <ChatInput onSend={handleSend} isStreaming={isStreaming} />
       </div>
     </div>
   );
