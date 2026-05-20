@@ -21,11 +21,44 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isUserScrollingRef = useRef(false);
+  const lastScrollPositionRef = useRef(0);
+  const hasReturnedFromOtherTabRef = useRef(false);
 
   useEffect(() => {
-    // 只有当用户没有手动滚动时，才自动滚动到底部
+    // 监听页面可见性变化
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 用户从其他页面返回
+        hasReturnedFromOtherTabRef.current = true;
+        if (messagesContainerRef.current) {
+          // 恢复之前的滚动位置
+          messagesContainerRef.current.scrollTop = lastScrollPositionRef.current;
+        }
+      } else {
+        // 用户离开页面，保存当前滚动位置
+        if (messagesContainerRef.current) {
+          lastScrollPositionRef.current = messagesContainerRef.current.scrollTop;
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // 只有当用户没有手动滚动且不是从其他页面返回时，才自动滚动到底部
     if (!isUserScrollingRef.current && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      // 如果是从其他页面返回，不自动滚动
+      if (!hasReturnedFromOtherTabRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // 重置标志，下次可以正常滚动
+        hasReturnedFromOtherTabRef.current = false;
+      }
     }
   }, [messages]);
 
@@ -35,6 +68,8 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
       // 如果用户滚动到接近底部，认为用户停止手动滚动
       const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
       isUserScrollingRef.current = !isAtBottom;
+      // 保存滚动位置
+      lastScrollPositionRef.current = scrollTop;
     }
   };
 
