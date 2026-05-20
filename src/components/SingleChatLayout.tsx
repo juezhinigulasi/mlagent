@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import HistoryPanel from './HistoryPanel';
 import ChatWindow, { Message } from './ChatWindow';
 import { useChat } from '../context/ChatContext';
+import { useAuth } from '../context/AuthContext';
 
 interface SingleChatLayoutProps {
   title: string;
@@ -36,6 +37,7 @@ export default function SingleChatLayout({
   onDelete,
 }: SingleChatLayoutProps) {
   const { getActiveSessionMessages, addMessage, getConversationId, setConversationId } = useChat();
+  const { points } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
@@ -61,6 +63,17 @@ export default function SingleChatLayout({
 
     // 判断是否需要调用 Dify API
     if (apiFeatures.includes(featureId)) {
+      // 检查积分
+      if (points <= 0) {
+        const errorReply: Message = {
+          id: (Date.now() + 1).toString(),
+          content: '抱歉，您的积分不足，请联系管理员获取积分后再使用。',
+          isUser: false,
+          timestamp: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+        };
+        addMessage(featureId, activeHistoryId, errorReply);
+        return;
+      }
       setIsStreaming(true);
       setStreamingContent('');
       
@@ -246,7 +259,7 @@ export default function SingleChatLayout({
         addMessage(featureId, activeHistoryId, replyMessage);
       }, 1000);
     }
-  }, [featureId, activeHistoryId, addMessage, getConversationId, setConversationId]);
+  }, [featureId, activeHistoryId, addMessage, getConversationId, setConversationId, points]);
 
   useEffect(() => {
     return () => {
