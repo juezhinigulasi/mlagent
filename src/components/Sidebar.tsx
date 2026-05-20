@@ -1,4 +1,4 @@
-import { MessageSquare, Sparkles, FileText, TrendingUp, Image, User, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { MessageSquare, Sparkles, FileText, TrendingUp, Image, User, ChevronLeft, ChevronRight, LogOut, Coins } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface SidebarProps {
@@ -8,9 +8,10 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   user: SupabaseUser | null;
   onSignOut: () => void;
+  points: number;
 }
 
-export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, onToggleCollapse, user, onSignOut }: SidebarProps) {
+export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, onToggleCollapse, user, onSignOut, points }: SidebarProps) {
   const features = [
     { id: 'polish', name: '文案润色大师', icon: MessageSquare },
     { id: 'prompt', name: '提示词大师', icon: Sparkles },
@@ -81,7 +82,14 @@ export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, o
           {!isCollapsed && (
             <div className="flex-1 overflow-hidden">
               <p className="text-white text-sm font-medium whitespace-nowrap truncate">{user?.email || '用户'}</p>
-              <p className="text-yellow-400 text-xs whitespace-nowrap">学员专用</p>
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-400 text-xs whitespace-nowrap">学员专用</span>
+                <span className="text-gray-600">|</span>
+                <span className="text-orange-400 text-xs flex items-center gap-1">
+                  <Coins className="w-3 h-3" />
+                  {points}
+                </span>
+              </div>
             </div>
           )}
           {!isCollapsed && (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Lock, ArrowRight, User } from 'lucide-react';
+import { Lock, ArrowRight, User, Coins } from 'lucide-react';
 import Sidebar from './Sidebar';
 import SingleChatLayout from './SingleChatLayout';
 import AuthModal from './AuthModal';
@@ -13,7 +13,7 @@ export default function AICreatorApp() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { sessions, activeSessionId, setActiveSession, createNewSession, deleteSession, setUserId } = useChat();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, points, pointsLoading, signOut } = useAuth();
 
   useEffect(() => {
     if (!loading) {
@@ -41,7 +41,7 @@ export default function AICreatorApp() {
     deleteSession(activeFeature, sessionId);
   };
 
-  if (loading) {
+  if (loading || pointsLoading) {
     return (
       <div className="flex h-screen bg-[#0a0a0a] items-center justify-center">
         <div className="text-white">加载中...</div>
@@ -72,6 +72,27 @@ export default function AICreatorApp() {
     );
   }
 
+  if (points <= 0) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-8">
+        <div className="text-center max-w-md">
+          <div className="bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-8">
+            <Coins className="w-12 h-12 text-yellow-500" />
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-4">积分不足</h1>
+          <p className="text-gray-400 mb-2">您当前的积分: <span className="text-yellow-500 font-bold">{points}</span></p>
+          <p className="text-gray-500 mb-8">请联系管理员获取积分后再使用</p>
+          <button
+            onClick={signOut}
+            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors"
+          >
+            退出登录
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-[#0a0a0a]">
       <Sidebar
@@ -81,6 +102,7 @@ export default function AICreatorApp() {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         user={user}
         onSignOut={signOut}
+        points={points}
       />
 
       <main className="flex-1 overflow-hidden">
