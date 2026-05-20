@@ -21,9 +21,9 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const [inputValue, setInputValue] = useState('');
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const isUserScrollingRef = useRef(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollPositionRef = useRef(0);
 
+  // 实时保存滚动位置
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
@@ -31,83 +31,29 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
     const { scrollTop, scrollHeight, clientHeight } = container;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
     
-    // 如果用户滚动到接近底部，显示/隐藏按钮
+    // 显示/隐藏回到最新按钮
     setShowScrollToBottom(distanceFromBottom >= 100);
     
-    // 检测用户是否在主动滚动
-    isUserScrollingRef.current = distanceFromBottom >= 100;
-    
-    // 清除之前的超时
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-    
-    // 用户停止滚动后，重置标志
-    scrollTimeoutRef.current = setTimeout(() => {
-      isUserScrollingRef.current = false;
-    }, 150);
+    // 实时保存滚动位置
+    lastScrollPositionRef.current = scrollTop;
+    sessionStorage.setItem('chatScrollPosition', scrollTop.toString());
   }, []);
 
-  // 使用原生方式处理滚动，避免ref问题
-  useEffect(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    const handleNativeScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-      
-      setShowScrollToBottom(distanceFromBottom >= 100);
-      isUserScrollingRef.current = distanceFromBottom >= 100;
-      
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      
-      scrollTimeoutRef.current = setTimeout(() => {
-        isUserScrollingRef.current = false;
-      }, 150);
-    };
-
-    container.addEventListener('scroll', handleNativeScroll);
-    
-    return () => {
-      container.removeEventListener('scroll', handleNativeScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // 使用 beforeunload 保存滚动位置
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const container = messagesContainerRef.current;
-      if (container) {
-        sessionStorage.setItem('chatScrollPosition', container.scrollTop.toString());
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
-  // 页面加载时恢复滚动位置
+  // 恢复滚动位置
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (container) {
       const savedPosition = sessionStorage.getItem('chatScrollPosition');
       if (savedPosition) {
-        // 延迟恢复，确保DOM已完全加载
+        // 使用多个 requestAnimationFrame 确保正确恢复
         requestAnimationFrame(() => {
-          container.scrollTop = parseInt(savedPosition, 10);
+          requestAnimationFrame(() => {
+            container.scrollTop = parseInt(savedPosition, 10);
+          });
         });
       }
     }
-  }, []);
+  }, [messages]);
 
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
@@ -140,6 +86,7 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
 
       <div 
         ref={messagesContainerRef}
+        onScroll={handleScroll}
         className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600"
       >
         {messages.map((message) => (

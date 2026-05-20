@@ -77,10 +77,11 @@ export default function SingleChatLayout({
       setIsStreaming(true);
       setStreamingContent('');
       
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      abortControllerRef.current = new AbortController();
+      // 不使用 AbortController，避免标签页切换导致请求中断
+      // if (abortControllerRef.current) {
+      //   abortControllerRef.current.abort();
+      // }
+      // abortControllerRef.current = new AbortController();
 
       try {
         const conversationId = getConversationId(featureId);
@@ -97,7 +98,8 @@ export default function SingleChatLayout({
             conversationId: conversationId || null,
             featureId: featureId,
           }),
-          signal: abortControllerRef.current.signal,
+          // 不使用 signal，防止标签页切换导致中断
+          // signal: abortControllerRef.current.signal,
         });
 
         console.log('Response status:', response.status);
@@ -129,8 +131,8 @@ export default function SingleChatLayout({
         while (true) {
           const { done, value } = await reader.read();
           
-          if (done || abortControllerRef.current?.signal.aborted) {
-            console.log('Streaming done or aborted');
+          if (done) {
+            console.log('Streaming done');
             break;
           }
 
@@ -261,11 +263,28 @@ export default function SingleChatLayout({
     }
   }, [featureId, activeHistoryId, addMessage, getConversationId, setConversationId, points]);
 
+  // 只有当切换feature或activeHistoryId时才取消之前的请求
+  // 但不要因为标签页不可见而取消
   useEffect(() => {
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      // 暂时不自动取消请求，避免标签页切换导致中断
+      // if (abortControllerRef.current) {
+      //   abortControllerRef.current.abort();
+      // }
+    };
+  }, []);
+
+  // 监听页面可见性变化，但不要取消正在进行的请求
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // 标签页可见性变化时，不取消正在进行的请求
+      // 保持请求继续进行
+      console.log('Visibility changed:', document.visibilityState);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
