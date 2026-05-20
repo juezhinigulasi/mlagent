@@ -22,11 +22,60 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const isUserScrollingRef = useRef(false);
+  const lastScrollPositionRef = useRef(0);
+  const hasRestoredPositionRef = useRef(false);
+
+  // 保存滚动位置
+  const saveScrollPosition = () => {
+    if (messagesContainerRef.current) {
+      lastScrollPositionRef.current = messagesContainerRef.current.scrollTop;
+    }
+  };
+
+  // 恢复滚动位置
+  const restoreScrollPosition = () => {
+    if (messagesContainerRef.current && !hasRestoredPositionRef.current) {
+      // 恢复到之前保存的位置
+      messagesContainerRef.current.scrollTop = lastScrollPositionRef.current;
+      hasRestoredPositionRef.current = true;
+      // 重置标志，下次新消息时可以正常滚动
+      setTimeout(() => {
+        hasRestoredPositionRef.current = false;
+      }, 100);
+    }
+  };
 
   useEffect(() => {
-    // 完全移除自动滚动 - 用户自己控制滚动
-  }, [messages]);
+    // 监听页面可见性变化（标签页切换）
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 用户返回页面
+        restoreScrollPosition();
+      } else {
+        // 用户离开页面
+        saveScrollPosition();
+      }
+    };
+
+    // 监听窗口失焦/聚焦（窗口切换）
+    const handleWindowBlur = () => {
+      saveScrollPosition();
+    };
+
+    const handleWindowFocus = () => {
+      restoreScrollPosition();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('focus', handleWindowFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
+    };
+  }, []);
 
   const handleScroll = () => {
     if (messagesContainerRef.current) {
@@ -34,8 +83,8 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
       // 如果用户滚动到接近底部，显示/隐藏按钮
       const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
       setShowScrollToBottom(!isAtBottom);
-      // 如果用户在底部，允许自动滚动
-      isUserScrollingRef.current = !isAtBottom;
+      // 保存滚动位置
+      lastScrollPositionRef.current = scrollTop;
     }
   };
 
