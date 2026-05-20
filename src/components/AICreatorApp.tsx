@@ -41,7 +41,7 @@ export default function AICreatorApp() {
     deleteSession(activeFeature, sessionId);
   };
 
-  if (loading || pointsLoading) {
+  if (loading) {
     return (
       <div className="flex h-screen bg-[#0a0a0a] items-center justify-center">
         <div className="text-white">加载中...</div>
@@ -68,6 +68,14 @@ export default function AICreatorApp() {
           </button>
         </div>
         <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      </div>
+    );
+  }
+
+  if (pointsLoading) {
+    return (
+      <div className="flex h-screen bg-[#0a0a0a] items-center justify-center">
+        <div className="text-white">加载中...</div>
       </div>
     );
   }
