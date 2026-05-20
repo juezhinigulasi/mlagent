@@ -21,43 +21,43 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const [inputValue, setInputValue] = useState('');
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const isInitialLoad = useRef(true);
+  const lastScrollPosition = useRef(0);
+  const animationFrameId = useRef<number>();
+  const isRestoring = useRef(false);
 
-  // 保存滚动位置到 localStorage
-  const saveScrollPosition = useCallback(() => {
-    const container = messagesContainerRef.current;
-    if (container) {
-      const scrollTop = container.scrollTop;
-      localStorage.setItem('chatScrollPosition', scrollTop.toString());
-    }
-  }, []);
-
-  // 恢复滚动位置
-  const restoreScrollPosition = useCallback(() => {
+  // 强制保持滚动位置的函数
+  const forceMaintainScroll = useCallback(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
-
+    
     const savedPosition = localStorage.getItem('chatScrollPosition');
     if (savedPosition) {
       const position = parseInt(savedPosition, 10);
-      console.log('Restoring scroll position:', position);
-      
-      // 确保 DOM 完全更新后再设置滚动位置
-      setTimeout(() => {
+      if (container.scrollTop !== position) {
         container.scrollTop = position;
-      }, 50);
-      
-      // 再尝试一次，确保生效
-      setTimeout(() => {
-        container.scrollTop = position;
-      }, 150);
+      }
+    }
+  }, []);
+
+  // 持续保持滚动位置的动画循环
+  const maintainScrollLoop = useCallback(() => {
+    forceMaintainScroll();
+    animationFrameId.current = requestAnimationFrame(maintainScrollLoop);
+  }, [forceMaintainScroll]);
+
+  // 保存滚动位置
+  const saveScrollPosition = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (container) {
+      lastScrollPosition.current = container.scrollTop;
+      localStorage.setItem('chatScrollPosition', container.scrollTop.toString());
     }
   }, []);
 
   // 处理滚动
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current;
-    if (!container) return;
+    if (!container || isRestoring.current) return;
     
     const { scrollTop, scrollHeight, clientHeight } = container;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
@@ -66,49 +66,90 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
     setShowScrollToBottom(distanceFromBottom >= 100);
     
     // 实时保存滚动位置
+    lastScrollPosition.current = scrollTop;
     localStorage.setItem('chatScrollPosition', scrollTop.toString());
   }, []);
 
-  // 组件挂载时恢复位置
+  // 恢复滚动位置
+  const restoreScrollPosition = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    isRestoring.current = true;
+    
+    const savedPosition = localStorage.getItem('chatScrollPosition');
+    if (savedPosition) {
+      const position = parseInt(savedPosition, 10);
+      console.log('Restoring scroll position to:', position);
+      
+      // 多次尝试恢复，确保成功
+      const attempts = [0, 50, 100, 200, 500];
+      attempts.forEach(delay => {
+        setTimeout(() => {
+          if (container) {
+            container.scrollTop = position;
+          }
+        }, delay);
+      });
+    }
+    
+    setTimeout(() => {
+      isRestoring.current = false;
+    }, 600);
+  }, []);
+
+  // 组件初始化
   useEffect(() => {
+    // 启动持续保持循环
+    maintainScrollLoop();
+    
+    // 立即恢复一次
     restoreScrollPosition();
     
-    // 监听标签页可见性变化
+    // 监听各种可能的重新渲染事件
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        console.log('Page visible, restoring scroll position');
+        console.log('Page became visible, restoring scroll');
         restoreScrollPosition();
       } else {
-        // 隐藏时保存位置
         saveScrollPosition();
       }
     };
-
+    
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', restoreScrollPosition);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', restoreScrollPosition);
+      
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
-  }, [restoreScrollPosition, saveScrollPosition]);
+  }, [restoreScrollPosition, saveScrollPosition, maintainScrollLoop]);
 
-  // messages 变化时恢复位置（但只在首次加载时）
+  // messages 变化时，也尝试恢复位置
   useEffect(() => {
-    if (isInitialLoad.current) {
-      isInitialLoad.current = false;
+    // 延迟恢复，等DOM更新完
+    setTimeout(() => {
       restoreScrollPosition();
-    }
+    }, 100);
   }, [messages, restoreScrollPosition]);
 
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
     if (container) {
+      isRestoring.current = true;
       container.scrollTo({
         top: container.scrollHeight,
         behavior: 'smooth'
       });
-      // 滚动到底部后，保存这个位置
+      
+      // 保存底部位置
       setTimeout(() => {
-        saveScrollPosition();
+        localStorage.setItem('chatScrollPosition', container.scrollTop.toString());
+        isRestoring.current = false;
       }, 300);
     }
   };
