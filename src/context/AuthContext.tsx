@@ -26,34 +26,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchPoints = async (userId: string) => {
     setPointsLoading(true);
     
-    const timeoutPromise = new Promise<{ data: { points: number } | null; error: Error | null }>((resolve) => {
-      setTimeout(() => {
-        resolve({ data: null, error: new Error('Timeout') });
-      }, 5000);
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const timeoutPromise = new Promise<void>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('Timeout')), 5000);
     });
 
-    const queryPromise = supabase
-      .from('user_points')
-      .select('points')
-      .eq('user_id', userId)
-      .single()
-      .then((result) => ({ data: result.data, error: result.error as Error | null }))
-      .catch((err) => ({ data: null, error: err as Error }));
+    const queryPromise = (async () => {
+      const { data, error } = await supabase
+        .from('user_points')
+        .select('points')
+        .eq('user_id', userId)
+        .single();
+      
+      if (!error && data) {
+        setPoints(data.points || 0);
+      } else {
+        setPoints(0);
+      }
+    })();
 
     try {
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
-      
-      if (error || !data) {
-        console.error('获取积分失败:', error);
-        setPoints(0);
-      } else {
-        setPoints(data.points || 0);
-      }
+      await Promise.race([queryPromise, timeoutPromise]);
     } catch (error) {
       console.error('获取积分失败:', error);
       setPoints(0);
+    } finally {
+      clearTimeout(timeoutId);
+      setPointsLoading(false);
     }
-    setPointsLoading(false);
   };
 
   useEffect(() => {
