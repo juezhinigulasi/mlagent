@@ -85,18 +85,7 @@ export default function AICreatorApp() {
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
-      <main className="flex-1 overflow-hidden">
-        <div className="fixed top-4 right-4 z-40">
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm flex items-center gap-2 transition-colors"
-          >
-            <User className="w-4 h-4" />
-            <span className="max-w-24 truncate">{user.email}</span>
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
-
+      <main className="flex-1 overflow-hidden flex flex-col">
         <SingleChatLayout
           title={getFeatureTitle()}
           featureId={activeFeature}
@@ -106,6 +95,25 @@ export default function AICreatorApp() {
           onNewSession={handleNewSession}
           onDelete={handleDelete}
         />
+
+        <div className="fixed bottom-4 left-4 z-40 bg-gray-800/90 backdrop-blur-sm rounded-xl p-3 border border-gray-700 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-black" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-white text-sm font-medium truncate max-w-32">{user.email}</span>
+              <span className="text-yellow-400 text-xs">学员专用</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="ml-2 p-2 hover:bg-gray-700 rounded-lg transition-colors group"
+              title="退出登录"
+            >
+              <LogOut className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+            </button>
+          </div>
+        </div>
       </main>
 
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
