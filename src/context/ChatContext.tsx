@@ -27,11 +27,10 @@ interface ChatContextType {
   deleteSession: (featureId: string, sessionId: string) => void;
   getConversationId: (featureId: string) => string | undefined;
   setConversationId: (featureId: string, sessionId: string, conversationId: string) => void;
+  setUserId: (userId: string | null) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
-
-const STORAGE_KEY = 'ai-creator-chat-data';
 
 const defaultSessions: Record<string, ChatSession[]> = {
   polish: [
@@ -127,11 +126,17 @@ const featureNames: Record<string, string> = {
   chapter: '章节大师',
 };
 
-const getStoredSessions = (): Record<string, ChatSession[]> => {
+const getStorageKey = (userId: string | null): string => {
+  if (!userId) return 'ai-creator-chat-guest';
+  return `ai-creator-chat-${userId}`;
+};
+
+const getStoredSessions = (userId: string | null): Record<string, ChatSession[]> => {
   if (typeof window === 'undefined') {
     return defaultSessions;
   }
-  const stored = localStorage.getItem(STORAGE_KEY);
+  const key = getStorageKey(userId);
+  const stored = localStorage.getItem(key);
   if (stored) {
     try {
       return JSON.parse(stored);
@@ -143,14 +148,15 @@ const getStoredSessions = (): Record<string, ChatSession[]> => {
 };
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  const [userId, setUserIdState] = useState<string | null>(null);
   const [sessions, setSessions] = useState<Record<string, ChatSession[]>>(defaultSessions);
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
-    const stored = getStoredSessions();
+    const stored = getStoredSessions(userId);
     setSessions(stored);
     setHasHydrated(true);
-  }, []);
+  }, [userId]);
 
   const [activeSessionId, setActiveSessionId] = useState<Record<string, string | null>>(() => {
     const initial: Record<string, string | null> = {};
@@ -161,10 +167,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    if (typeof window !== 'undefined' && userId) {
+      const key = getStorageKey(userId);
+      localStorage.setItem(key, JSON.stringify(sessions));
     }
-  }, [sessions]);
+  }, [sessions, userId]);
+
+  const setUserId = (newUserId: string | null) => {
+    setUserIdState(newUserId);
+    if (!newUserId) {
+      setSessions(defaultSessions);
+    }
+  };
 
   const setActiveSession = (featureId: string, sessionId: string | null) => {
     setActiveSessionId(prev => ({ ...prev, [featureId]: sessionId }));
@@ -268,6 +282,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         deleteSession,
         getConversationId,
         setConversationId,
+        setUserId,
       }}
     >
       {children}
