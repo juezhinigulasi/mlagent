@@ -38,6 +38,11 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
     }
   };
 
+  const handleSend = (message: string) => {
+    setInputValue('');
+    onSendMessage(message);
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-gray-900/50">
       <header className="h-16 flex-shrink-0 bg-gray-900/80 border-b border-gray-800 flex items-center justify-between px-6">
