@@ -1,13 +1,16 @@
-import { MessageSquare, Sparkles, FileText, TrendingUp, Image, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MessageSquare, Sparkles, FileText, TrendingUp, Image, User, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface SidebarProps {
   activeFeature: string;
   onFeatureChange: (feature: string) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  user: SupabaseUser | null;
+  onSignOut: () => void;
 }
 
-export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, onToggleCollapse }: SidebarProps) {
+export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, onToggleCollapse, user, onSignOut }: SidebarProps) {
   const features = [
     { id: 'polish', name: '文案润色大师', icon: MessageSquare },
     { id: 'prompt', name: '提示词大师', icon: Sparkles },
@@ -72,14 +75,23 @@ export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, o
 
       <div className="p-3 border-t border-gray-800">
         <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-          <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center flex-shrink-0">
-            <User className="w-5 h-5 text-gray-400" />
+          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <User className="w-5 h-5 text-black" />
           </div>
           {!isCollapsed && (
             <div className="flex-1 overflow-hidden">
-              <p className="text-white text-sm font-medium whitespace-nowrap">创作者</p>
-              <p className="text-gray-500 text-xs whitespace-nowrap">Pro 会员</p>
+              <p className="text-white text-sm font-medium whitespace-nowrap truncate">{user?.email || '用户'}</p>
+              <p className="text-yellow-400 text-xs whitespace-nowrap">学员专用</p>
             </div>
+          )}
+          {!isCollapsed && (
+            <button
+              onClick={onSignOut}
+              className="p-2 hover:bg-gray-700 rounded-lg transition-colors group"
+              title="退出登录"
+            >
+              <LogOut className="w-4 h-4 text-gray-400 group-hover:text-white" />
+            </button>
           )}
         </div>
       </div>
