@@ -26,12 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchPoints = async (userId: string) => {
     setPointsLoading(true);
     
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    const timeoutPromise = new Promise<void>((_, reject) => {
-      timeoutId = setTimeout(() => reject(new Error('Timeout')), 5000);
-    });
-
-    const queryPromise = (async () => {
+    try {
       const { data, error } = await supabase
         .from('user_points')
         .select('points')
@@ -41,21 +36,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!error && data) {
         setPoints(data.points || 0);
       } else {
+        await supabase
+          .from('user_points')
+          .insert([{ user_id: userId, points: 0 }])
+          .select();
         setPoints(0);
       }
-    })();
-
-    try {
-      await Promise.race([queryPromise, timeoutPromise]);
     } catch (error) {
       console.error('获取积分失败:', error);
       setPoints(0);
-    } finally {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      setPointsLoading(false);
     }
+    
+    setPointsLoading(false);
   };
 
   useEffect(() => {
@@ -87,22 +79,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
-    
-    if (!error && data.user) {
-      try {
-        await supabase
-          .from('user_points')
-          .insert([{ user_id: data.user.id, points: 0 }])
-          .select();
-      } catch (e) {
-        console.log('积分记录已存在或创建失败:', e);
-      }
-    }
-    
     return { error: error?.message || null };
   };
 
