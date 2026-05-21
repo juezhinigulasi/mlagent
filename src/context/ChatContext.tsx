@@ -102,7 +102,7 @@ const defaultSessions: Record<string, ChatSession[]> = {
       time: '今天 10:30',
       preview: '第三章：风雷动...',
       messages: [
-        { id: '1', content: '您好！我是章节大师，专门帮您构思小说章节。请告诉我您的故事背景和想要的章节类型。', isUser: false, timestamp: '10:30' },
+        { id: '1', content: '您好！原创文案功能正在开发中，敬请期待...', isUser: false, timestamp: '10:30' },
         { id: '2', content: '我正在写一部玄幻小说，需要一个精彩的打斗场面章节开头。', isUser: true, timestamp: '10:31' },
         { id: '3', content: '好的！以下是为您构思的章节开头：\n\n【第三章：风雷动】\n\n青冥山脉，黑云压城。\n\n林玄手持青锋剑，衣袂猎猎作响。对面的血月宗护法眼中闪过一丝狠厉，手中血色长鞭如毒蛇般蜿蜒而出。\n\n"小子，交出玄冰玉髓，饶你不死！"', isUser: false, timestamp: '10:32' },
       ],
@@ -115,7 +115,7 @@ const featureWelcomeMessages: Record<string, string> = {
   prompt: '欢迎使用提示词大师！告诉我您想要生成什么类型的提示词，我来帮您优化。',
   cover: '封面标题章节为您服务！请告诉我您的书籍类型和风格。',
   topic: '欢迎使用veo 8秒提示词！告诉我您的领域，我来帮您生成吸引人的标题。',
-  chapter: '您好！我是章节大师，专门帮您构思小说章节。请告诉我您的故事背景和想要的章节类型。',
+  chapter: '您好！原创文案功能正在开发中，敬请期待...',
 };
 
 const featureNames: Record<string, string> = {
@@ -123,7 +123,7 @@ const featureNames: Record<string, string> = {
   prompt: '提示词大师',
   cover: '封面标题章节',
   topic: 'veo 8秒提示词',
-  chapter: '章节大师',
+  chapter: '原创文案（暂不可用）',
 };
 
 const getStorageKey = (userId: string | null): string => {

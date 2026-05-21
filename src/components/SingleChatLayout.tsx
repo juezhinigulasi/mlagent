@@ -19,7 +19,7 @@ interface SingleChatLayoutProps {
 const replies: Record<string, string> = {
   polish: '【文案润色大师】正在为您润色文案...',
   prompt: '【提示词大师】正在为您生成提示词...',
-  chapter: '【章节大师】正在为您构思章节...',
+  chapter: '【原创文案（暂不可用）】功能开发中...',
   topic: '【veo 8秒提示词】正在为您生成标题...',
   cover: '【封面标题章节】正在为您创作提示词...',
 };

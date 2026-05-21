@@ -17,7 +17,7 @@ export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, o
     { id: 'prompt', name: '提示词大师', icon: Sparkles },
     { id: 'cover', name: '封面标题章节', icon: Image },
     { id: 'topic', name: 'veo 8秒提示词', icon: TrendingUp },
-    { id: 'chapter', name: '章节大师', icon: FileText },
+    { id: 'chapter', name: '原创文案（暂不可用）', icon: FileText },
   ];
 
   return (
