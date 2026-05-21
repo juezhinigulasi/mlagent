@@ -14,7 +14,7 @@ interface SidebarProps {
 export default function Sidebar({ activeFeature, onFeatureChange, isCollapsed, onToggleCollapse, user, onSignOut, points }: SidebarProps) {
   const features = [
     { id: 'polish', name: '文案润色大师', icon: MessageSquare },
-    { id: 'prompt', name: '提示词大师', icon: Sparkles },
+    { id: 'prompt', name: 'grok 10秒提示词', icon: Sparkles },
     { id: 'cover', name: '封面标题章节', icon: Image },
     { id: 'topic', name: 'veo 8秒提示词', icon: TrendingUp },
     { id: 'chapter', name: '原创文案（暂不可用）', icon: FileText },

@@ -63,7 +63,7 @@ const defaultSessions: Record<string, ChatSession[]> = {
       time: '今天 10:25',
       preview: '一幅美丽的山间日落...',
       messages: [
-        { id: '1', content: '欢迎使用提示词大师！告诉我您想要生成什么类型的提示词。', isUser: false, timestamp: '10:25' },
+        { id: '1', content: '欢迎使用 grok 10秒提示词！告诉我您想要生成什么类型的提示词。', isUser: false, timestamp: '10:25' },
         { id: '2', content: '帮我生成一个AI绘画的提示词，主题是风景', isUser: true, timestamp: '10:26' },
         { id: '3', content: '好的！以下是为您生成的详细提示词：\n\n一幅美丽的山间日落风景，金色的阳光洒在连绵起伏的山脉上，山间有清澈的小溪流淌，溪边开满野花，远处的天空被染成橙红色，有几朵白云漂浮，整体氛围宁静祥和，油画风格，高清8K，细腻的笔触，温暖的色调', isUser: false, timestamp: '10:28' },
       ],
@@ -112,7 +112,7 @@ const defaultSessions: Record<string, ChatSession[]> = {
 
 const featureWelcomeMessages: Record<string, string> = {
   polish: '您好！我是文案润色大师。请把需要润色的文案发给我，我来帮您优化表达。',
-  prompt: '欢迎使用提示词大师！告诉我您想要生成什么类型的提示词，我来帮您优化。',
+  prompt: '欢迎使用 grok 10秒提示词！告诉我您想要生成什么类型的提示词，我来帮您优化。',
   cover: '封面标题章节为您服务！请告诉我您的书籍类型和风格。',
   topic: '欢迎使用veo 8秒提示词！告诉我您的领域，我来帮您生成吸引人的标题。',
   chapter: '您好！原创文案功能正在开发中，敬请期待...',
@@ -120,7 +120,7 @@ const featureWelcomeMessages: Record<string, string> = {
 
 const featureNames: Record<string, string> = {
   polish: '文案润色大师',
-  prompt: '提示词大师',
+  prompt: 'grok 10秒提示词',
   cover: '封面标题章节',
   topic: 'veo 8秒提示词',
   chapter: '原创文案（暂不可用）',
