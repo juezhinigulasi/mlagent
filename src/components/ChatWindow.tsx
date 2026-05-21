@@ -21,43 +21,45 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
   const [inputValue, setInputValue] = useState('');
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const lastScrollPosition = useRef(0);
-  const animationFrameId = useRef<number>();
   const isRestoring = useRef(false);
-
-  // 强制保持滚动位置的函数
-  const forceMaintainScroll = useCallback(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-    
-    const savedPosition = localStorage.getItem('chatScrollPosition');
-    if (savedPosition) {
-      const position = parseInt(savedPosition, 10);
-      if (container.scrollTop !== position) {
-        container.scrollTop = position;
-      }
-    }
-  }, []);
-
-  // 持续保持滚动位置的动画循环
-  const maintainScrollLoop = useCallback(() => {
-    forceMaintainScroll();
-    animationFrameId.current = requestAnimationFrame(maintainScrollLoop);
-  }, [forceMaintainScroll]);
+  const isUserScrolling = useRef(false);
+  const scrollTimeout = useRef<NodeJS.Timeout>();
 
   // 保存滚动位置
   const saveScrollPosition = useCallback(() => {
     const container = messagesContainerRef.current;
     if (container) {
-      lastScrollPosition.current = container.scrollTop;
       localStorage.setItem('chatScrollPosition', container.scrollTop.toString());
     }
+  }, []);
+
+  // 恢复滚动位置
+  const restoreScrollPosition = useCallback(() => {
+    const container = messagesContainerRef.current;
+    if (!container || isRestoring.current) return;
+
+    isRestoring.current = true;
+    
+    const savedPosition = localStorage.getItem('chatScrollPosition');
+    if (savedPosition) {
+      const position = parseInt(savedPosition, 10);
+      // 只有当用户没有手动滚动时，才恢复位置
+      if (!isUserScrolling.current) {
+        requestAnimationFrame(() => {
+          container.scrollTop = position;
+        });
+      }
+    }
+    
+    setTimeout(() => {
+      isRestoring.current = false;
+    }, 100);
   }, []);
 
   // 处理滚动
   const handleScroll = useCallback(() => {
     const container = messagesContainerRef.current;
-    if (!container || isRestoring.current) return;
+    if (!container) return;
     
     const { scrollTop, scrollHeight, clientHeight } = container;
     const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
@@ -65,51 +67,34 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
     // 显示/隐藏回到最新按钮
     setShowScrollToBottom(distanceFromBottom >= 100);
     
-    // 实时保存滚动位置
-    lastScrollPosition.current = scrollTop;
-    localStorage.setItem('chatScrollPosition', scrollTop.toString());
-  }, []);
-
-  // 恢复滚动位置
-  const restoreScrollPosition = useCallback(() => {
-    const container = messagesContainerRef.current;
-    if (!container) return;
-
-    isRestoring.current = true;
+    // 标记用户正在滚动
+    isUserScrolling.current = true;
     
-    const savedPosition = localStorage.getItem('chatScrollPosition');
-    if (savedPosition) {
-      const position = parseInt(savedPosition, 10);
-      console.log('Restoring scroll position to:', position);
-      
-      // 多次尝试恢复，确保成功
-      const attempts = [0, 50, 100, 200, 500];
-      attempts.forEach(delay => {
-        setTimeout(() => {
-          if (container) {
-            container.scrollTop = position;
-          }
-        }, delay);
-      });
+    // 清除之前的定时器
+    if (scrollTimeout.current) {
+      clearTimeout(scrollTimeout.current);
     }
     
-    setTimeout(() => {
-      isRestoring.current = false;
-    }, 600);
-  }, []);
+    // 用户停止滚动3秒后，取消标记
+    scrollTimeout.current = setTimeout(() => {
+      isUserScrolling.current = false;
+      saveScrollPosition();
+    }, 3000);
+    
+    // 实时保存滚动位置
+    localStorage.setItem('chatScrollPosition', scrollTop.toString());
+  }, [saveScrollPosition]);
 
   // 组件初始化
   useEffect(() => {
-    // 启动持续保持循环
-    maintainScrollLoop();
+    // 延迟恢复一次位置
+    setTimeout(() => {
+      restoreScrollPosition();
+    }, 100);
     
-    // 立即恢复一次
-    restoreScrollPosition();
-    
-    // 监听各种可能的重新渲染事件
+    // 监听标签页可见性变化
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        console.log('Page became visible, restoring scroll');
         restoreScrollPosition();
       } else {
         saveScrollPosition();
@@ -117,30 +102,32 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
     };
     
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', restoreScrollPosition);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', restoreScrollPosition);
-      
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
       }
     };
-  }, [restoreScrollPosition, saveScrollPosition, maintainScrollLoop]);
+  }, [restoreScrollPosition, saveScrollPosition]);
 
-  // messages 变化时，也尝试恢复位置
+  // messages 变化时，恢复位置
   useEffect(() => {
-    // 延迟恢复，等DOM更新完
-    setTimeout(() => {
-      restoreScrollPosition();
-    }, 100);
+    // 如果用户在滚动中，不干扰
+    if (!isUserScrolling.current) {
+      setTimeout(() => {
+        restoreScrollPosition();
+      }, 50);
+    }
   }, [messages, restoreScrollPosition]);
 
+  // 回到最新
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
     if (container) {
-      isRestoring.current = true;
+      // 标记为用户操作，防止被覆盖
+      isUserScrolling.current = true;
+      
       container.scrollTo({
         top: container.scrollHeight,
         behavior: 'smooth'
@@ -148,9 +135,12 @@ export default function ChatWindow({ title, messages, onSendMessage, isStreaming
       
       // 保存底部位置
       setTimeout(() => {
-        localStorage.setItem('chatScrollPosition', container.scrollTop.toString());
-        isRestoring.current = false;
-      }, 300);
+        localStorage.setItem('chatScrollPosition', container.scrollHeight.toString());
+        // 5秒后允许恢复
+        setTimeout(() => {
+          isUserScrolling.current = false;
+        }, 5000);
+      }, 500);
     }
   };
 
